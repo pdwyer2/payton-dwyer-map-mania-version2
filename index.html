@@ -1,24 +1,28 @@
 <!DOCTYPE html>
-<html>
-  <header>
+<html lang="en">
       <!--
     Author:  Payton Dwyer
     Class:   Web & Distributed Programming
-    Project: Map Mania v1
-    Description: This is the first version of Map Mania for sprint 3.
+    Project: Map Mania v2
+    Description: This is the Second version of Map Mania for sprint 4.
     -->
-  </header>
   <head>
-    <title>Simple Map</title>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-    <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCyKPjsmxHJeMiL83ThCNmwdu248KNKikk&callback=initMap&libraries=&v=weekly"
-      defer
-    ></script>
-    <link rel="stylesheet" type="text/css" href="style.css" />
+    <meta charset="UTF-8">
+    <title>Favorite Places</title>
     <script src="app.js"></script>
+    <link rel="stylesheet" href="style.css">
   </head>
-  <body>
+  <body onload="instructionMessage(),countdown(5),mapCashTracker(),trackHints()">
+    <h1>Favorite Place - Payton Dwyer</h1>
+    <div id="subMenu">
+      <div class="timerTitle">Time Remaining: <span id="counter"></span></div>
+      <div class="scoreTitle">Current Map Cash: <span id="mapCash"></span></div>
+      <div class="hintsTitle">Hints Remaining: <span id="hintsLeft"></span></div>
+   </div>
     <div id="map"></div>
+    <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCyKPjsmxHJeMiL83ThCNmwdu248KNKikk&callback=initMap&libraries=&v=weekly"
+    async defer>
+    </script>
   </body>
 </html>
