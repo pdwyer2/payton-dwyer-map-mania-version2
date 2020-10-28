@@ -1,103 +1,135 @@
-//let map;
+var favoritePlaces = [
+  {"content":"Fence Lake Wisconsin","hint":"Hidden in America's Dairyland","coordinates":{"lat":45.9514,"lng":-89.8358}},
+  {"content":"The Great Barrier Reef","hint":"The world's largest coral reef","coordinates":{"lat":-18.2871,"lng":147.6992}},
+  {"content":"Chicago","hint":"The Windy City","coordinates":{"lat":41.8781,"lng":-87.6298}}
+];
+var cheatCodeWin = [
+  {"content":"Iceland Secret Win","coordinates":{"lat":64.9631,"lng":-19.0208}}
+]
+var currentPlaceIndex = favoritePlaces.length-1;
+var currentPlace = favoritePlaces[currentPlaceIndex];
+var hints = 3;
+var totalMarkers = [];
 
-/*
-function haversine_distance(mk1, mk2) {
-  var R = 3958.8; // Radius of the Earth in miles
-  var rlat1 = mk1.position.lat() * (Math.PI/180); // Convert degrees to radians
-  var rlat2 = mk2.position.lat() * (Math.PI/180); // Convert degrees to radians
-  var difflat = rlat2-rlat1; // Radian difference (latitudes)
-  var difflon = (mk2.position.lng()-mk1.position.lng()) * (Math.PI/180); // Radian difference (longitudes)
 
-  var d = 2 * R * Math.asin(Math.sqrt(Math.sin(difflat/2)*Math.sin(difflat/2)+Math.cos(rlat1)*Math.cos(rlat2)*Math.sin(difflon/2)*Math.sin(difflon/2)));
-  return d;
+function initApplication() {
+  console.log("Favorite Places - Starting!");
 }
-*/
-
-
 
 function initMap() {
-  const startLatlng = { lat: 41.15333, lng: 20.1683 };
-  //const capitalLatlng = { lat: 41.3275, lng: 19.8187};
-  const map = new google.maps.Map(document.getElementById("map"), {
-    zoom: 6,
-    center: startLatlng,
-  });
-  /*
-  var mk1 = new google.maps.Marker({
-    position: myLatlng,
-    map: map,
-    title: "Country",
-  });
-  var mk2 = new google.maps.Marker({
-    position: capitalLatlng,
-    map: map,
-    title: "Captial",
-  });
-  */
+  gMap = new google.maps.Map(document.getElementById("map"), {
+    "center": {"lat": 41.878, "lng": 10}, "zoom": 3});
 
-  //var distanceLine = new google.maps.Polyline({path: [myLatlng, capitalLatlng], map: map});
-  //var distance = haversine_distance(mk1, mk2);
-  //console.log("Distance between two markers: " + distance + " miles.")
+    google.maps.event.addListener(gMap, 'idle', function() { updateGame()});
+    google.maps.event.addListener(gMap, 'center_changed', function() { checkWin() });
+}
 
-  map.addListener("center_changed", () => {
-    window.setTimeout(() => {
-      map.panTo(marker.getPosition());
-    }, 200000);
-  });
-  mk1.addListener("click", () => {
-    map.setZoom(8);
-    map.setCenter(marker.getPosition());
-  });
-  map.addListener("bounds_changed", () => {
-    if ((map.getBounds().contains(capitalLatlng)) == true) {
-      console.log("Capital city is in current map bounds.");
-    } else{
-      console.log("Capital city is not in current map bounds.");
-    }
-  });
-  map.addListener("zoom_changed", () => {
-    currentZoom = map.getZoom();
-    console.log("Current zoom is: " + currentZoom);
-  });
+function updateGame(){
+  console.log("updateGame()");
+
+  var zoomLevel = gMap.getZoom();
+  console.log("Zoom Level:" + zoomLevel);
+
+  var inBounds = false;
+  if (gMap.getBounds().contains(currentPlace.coordinates)) {
+      var inBounds = true;
+  } if (gMap.getBounds().contains(cheatCodeWin[0].coordinates)){
+      var inBounds = true;
+      if ((zoomLevel > 7) && (inBounds)) {
+        alert("Cheat location found. YOU WON THE GAME! CONGRATULATIONS!");
+        window.close();
+      }
+  }
+
+  if ((zoomLevel > 7) && (inBounds)) {
+      var tempMarker
+      console.log("Found!!!");
+      if(currentPlaceIndex == 0) {
+        var foundLoc = document.getElementById("foundLoc");
+        console.log("You Found: " + JSON.stringify(currentPlace.content));
+        foundLoc.innerHTML = ("You Found: " + JSON.stringify(currentPlace.content)).toString();
+        tempMarker = addMarker(currentPlace);
+        totalMarkers.push(tempMarker);
+        console.log(totalMarkers.length);
+      } else {
+        var foundLoc = document.getElementById("foundLoc");
+        console.log("You Found: " + JSON.stringify(currentPlace.content));
+        foundLoc.innerHTML = ("You Found: " + JSON.stringify(currentPlace.content)).toString();
+        tempMarker = addMarker(currentPlace);
+        totalMarkers.push(tempMarker);
+        console.log(totalMarkers.length);
+        nextPlace();
+      } 
+  }
+}
+
+function nextPlace() {
+  currentPlaceIndex--;
+  currentPlace = favoritePlaces[currentPlaceIndex];
 }
 
 function instructionMessage(){
-  alert("Hello this is my map mania game!\nThe game has a 5 minute timer, you are only given 3 hints.\nEach hint uses $100 map cash.\nThe goal of the game is to finish with as much cash as possible.\nOnce you press okay the timer will begin.");
+  alert("Hello this is my map mania game!\nThe game has a one minute timer, you are only given three hints.\nThe goal is to find the three locations within one minute.\nOnce you press OKAY the timer will begin. Good Luck.");
+}
+
+function addMarker(markerContent) {
+  var marker = new google.maps.Marker({position:markerContent.coordinates, map:gMap});
+  if (markerContent.iconImagePath) {
+      marker.setIcon(markerContent.iconImagePath);
+  }
+
+  if (markerContent.content) {
+      var infoWindow = new google.maps.InfoWindow({"content":markerContent.content});
+      marker.addListener("click", function() { infoWindow.open(gMap, marker) });
+  }
 }
 
 function countdown(minutes) {
-    var seconds = 60;
-    var mins = minutes
-    function tick() {
-        var counter = document.getElementById("counter");
-        var current_minutes = mins-1
-        seconds--;
-        counter.innerHTML = current_minutes.toString() + ":" + (seconds < 10 ? "0" : "") + String(seconds);
-        if( seconds > 0 ) {
-            setTimeout(tick, 1000);
-        } else {
-            if(mins > 1){
-                countdown(mins-1);           
-            }
-        }
-    }
-    tick();   
-}
-
-function mapCashTracker() {
-  var currentCash = 500;
-  if(currentCash <= 0){
-
+  var seconds = 60;
+  var mins = minutes
+  
+  function tick() {
+      var counter = document.getElementById("counter");
+      var current_minutes = mins-1;
+      seconds--;
+      counter.innerHTML = current_minutes.toString() + ":" + (seconds < 10 ? "0" : "") + String(seconds);
+      if( seconds > 0 ) {
+          setTimeout(tick, 1000);
+      } else {
+          if(mins > 1){
+              countdown(mins-1);           
+          }
+      }
+      if((current_minutes == 0) && (seconds == 0)) {
+        alert("Time run out! GAME OVER!");
+        window.close();
+      }
   }
-  var mapCash = document.getElementById("mapCash");
-  mapCash.innerHTML = "$" + currentCash.toString();
+  tick();
 }
 
 function trackHints() {
-  var hints = 3;
-  if(hints = 0) {
-
-  }
+if(hints == 0) {
   var hintsLeft = document.getElementById("hintsLeft");
-  hintsLeft.innerHTML = hints.toString(); 
+  hintsLeft.innerHTML = "Out of Hints!"
+  document.getElementById("hintButton").disabled = true;
+} else {
+  var hintsLeft = document.getElementById("hintsLeft");
+  hintsLeft.innerHTML = hints.toString();
+
+}
+}
+
+function sendHint() {
+  document.getElementById("hintGiven").setAttribute("value",JSON.stringify(currentPlace.hint));
+  hints--;
+  trackHints();
+  console.log(hints);
+}
+
+function checkWin() {
+  if ((totalMarkers.length) >= 3){
+    alert("YOU WON THE GAME! CONGRATULATIONS!");
+    window.close();
+  }
 }

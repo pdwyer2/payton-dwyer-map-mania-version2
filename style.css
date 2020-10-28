@@ -3,8 +3,11 @@
 h1 { color:green; }
 
 #map {
-  height: 100%;
-  width: 100%;
+  height: 550px;
+  width: 1100px;
+  margin-top: 50px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Optional: Makes the sample page fill the window. */
@@ -16,23 +19,28 @@ html, body {
 
 #subMenu{
   width: 100%;
-  text-align: left;
+  height: 15px;
 }
 
 .timerTitle{
   float: left;
-  width: 30%;
-  padding: 10px;
-}
-
-.scoreTitle{
-  float: left;
-  width: 30%;
-  padding: 10px;
+  width: 25%;
+  padding: 2px;
 }
 
 .hintsTitle{
   float: left;
   width: 25%;
-  padding: 10px;
+  padding: 2px;
+}
+.requestHint{
+  float: left;
+  width: 40%;
+  padding: 2px;
+}
+
+.foundLocTitle{
+  float: left;
+  width: 90%;
+  padding: 2px;
 }
