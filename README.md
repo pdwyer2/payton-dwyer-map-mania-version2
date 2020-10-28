@@ -3,3 +3,4 @@ Author: Payton Dwyer
 Course: Web and Distributed Prog
 
 Source for timer countdown. Link: https://gist.github.com/adhithyan15/4350689#file-countdown-js
+Used class example Favorite-Places found in class repository
